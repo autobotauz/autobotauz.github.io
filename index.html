@@ -3,21 +3,82 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chat Gator — DAoC chat.log parser</title>
-  <meta name="description" content="Chat Gator turns your Dark Age of Camelot chat.log into damage, healing, realm point and ability breakdowns, right in your browser.">
-  <!-- Everything lives at /chatgator/ -- send people (and crawlers) straight there. -->
-  <link rel="canonical" href="https://autobotauz.github.io/chatgator/">
-  <meta http-equiv="refresh" content="0; url=https://autobotauz.github.io/chatgator/">
-  <script>location.replace('https://autobotauz.github.io/chatgator/' + location.search + location.hash);</script>
+  <title>Chat Gator — Dark Age of Camelot chat.log parser and damage meter</title>
+  <meta name="description" content="Chat Gator turns your Dark Age of Camelot chat.log into damage, healing, realm point and spell breakdowns, right in your browser. Built for Eden.">
+  <meta name="google-adsense-account" content="ca-pub-4282193286137929">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4282193286137929" crossorigin="anonymous"></script>
+  <meta property="og:title" content="Chat Gator — DAoC chat.log parser">
+  <meta property="og:description" content="Damage and heal meter, spells, pets and realm points from your Dark Age of Camelot chat.log, right in your browser.">
+  <meta property="og:image" content="https://autobotauz.github.io/chatgator/img/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐊</text></svg>">
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 640px; margin: 48px auto; padding: 0 16px; line-height: 1.5; color: #1f1f1d; background: #fafaf8; }
-    a { color: #2a78d6; }
-    @media (prefers-color-scheme: dark) { body { color: #f0efec; background: #0d0d0d; } a { color: #3987e5; } }
+    :root { --bg: #f9f9f7; --card: #fcfcfb; --text: #0b0b0b; --muted: #52514e; --border: rgba(11,11,11,.1); --link: #2a78d6; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0d0d0d; --card: #1a1a19; --text: #f0efec; --muted: #c3c2b7; --border: rgba(255,255,255,.1); --link: #3987e5; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 48px; }
+    a { color: var(--link); }
+    .hero { border-radius: 16px; color: #f2f1ec; padding: 44px 40px; background:
+      radial-gradient(60% 90% at 88% 0%, rgba(27,175,122,.30), transparent 70%),
+      radial-gradient(55% 80% at 0% 100%, rgba(42,120,214,.24), transparent 70%), #141614; }
+    .hero h1 { margin: 0; font-size: clamp(36px, 6vw, 56px); letter-spacing: -0.035em; line-height: 1; }
+    .hero p { margin: 14px 0 0; max-width: 34em; color: #c9c8bf; font-size: 18px; line-height: 1.45; }
+    .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .btn { display: inline-block; padding: 9px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 15px; }
+    .btn.primary { background: #1baf7a; color: #08130e; }
+    .btn.ghost { border: 1px solid rgba(255,255,255,.22); color: #f2f1ec; }
+    h2 { font-size: 20px; margin: 36px 0 8px; letter-spacing: -0.01em; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+    .card h3 { margin: 0 0 6px; font-size: 17px; }
+    .card p { margin: 0 0 10px; color: var(--muted); font-size: 14.5px; }
+    p { color: var(--text); }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin-top: 40px; font-size: 14px; }
+    nav a { color: var(--muted); text-decoration: none; } nav a:hover { text-decoration: underline; }
+    footer { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+    @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } }
   </style>
 </head>
 <body>
-  <h1>Chat Gator</h1>
-  <p>Chat Gator is a free, browser-based parser for Dark Age of Camelot. Drop in your <code>chat.log</code> (or watch it live while you play) and it breaks your session down into damage, healing, realm points, pets, defense and per-ability stats — all parsed locally, so your log never leaves your machine.</p>
-  <p>Taking you there now. If nothing happens, <a href="https://autobotauz.github.io/chatgator/">open Chat Gator</a>.</p>
+<div class="wrap">
+  <header class="hero">
+    <h1>🐊 Chat Gator</h1>
+    <p>A free Dark Age of Camelot chat.log parser: damage and heal meter, spells, pets and realm points, right in your browser.</p>
+    <div class="cta">
+      <a class="btn primary" href="/chatgator/">Open Chat Gator</a>
+      <a class="btn ghost" href="/chatgator/bask/">Bask with your group</a>
+      <a class="btn ghost" href="/chatgator/faq/">How to use</a>
+    </div>
+  </header>
+
+  <h2>What it does</h2>
+  <p>When you type <code>/chatlog</code> in Dark Age of Camelot, the game saves everything in your chat window to a file called <code>chat.log</code>. Chat Gator reads that file and shows you what the game doesn't: how much damage and healing you did and took, which spells and styles landed, crit or were resisted, what your pets did, how often you blocked, parried and evaded, and where your realm points came from.</p>
+  <p>Your session is split into fights automatically, and you can zoom any chart to a single moment. In Chrome or Edge, Chat Gator can follow your log while you play, so the numbers and the cooldown tracker keep up as you go. It's built and tested on real logs from the Eden server.</p>
+
+  <div class="cols">
+    <div class="card">
+      <h3>Chat Gator</h3>
+      <p>Your own full breakdown, fight by fight: every spell, style, song and pet, healing by target, defense, realm points by source, and heal over time uptime. Try it with a real sample session before you load your own log.</p>
+      <a href="/chatgator/">Open Chat Gator</a>
+    </div>
+    <div class="card">
+      <h3>Bask</h3>
+      <p>A live group meter for up to eight players. Each player's Chat Gator shares only combat numbers, so the group sees damage, healing, resists, interrupts and cooldowns side by side. No chat is shared, and a bask is deleted after 12 idle hours.</p>
+      <a href="/chatgator/bask/">Start or join a bask</a>
+    </div>
+  </div>
+
+  <h2>Your log stays private</h2>
+  <p>Chat Gator works entirely in your browser. Your <code>chat.log</code> is never uploaded; the site only sends a small note when you start a session so it can count how many sessions people start. The <a href="/chatgator/privacy/">privacy policy</a> has the details, including how ads and cookies work.</p>
+
+  <h2>Who makes it</h2>
+  <p>Chat Gator is a fan-made tool built by a Dark Age of Camelot player in their spare time. Questions, bug reports and ideas are welcome: message <strong>@autobotauz</strong> on Discord (Heb / Theorist).</p>
+
+  <nav aria-label="Site">
+    <a href="/chatgator/">Chat Gator</a><a href="/chatgator/bask/">Bask</a><a href="/chatgator/faq/">How to use / FAQ</a><a href="/chatgator/privacy/">Privacy</a>
+  </nav>
+  <footer>Chat Gator is not affiliated with Broadsword, Electronic Arts or Eden.</footer>
+</div>
 </body>
 </html>
